@@ -30,8 +30,8 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 
 def show_all_pokemons(request):
-    pokemons_entity = PokemonEntity.objects.filter(name__disappeared_at__gte=localtime(),
-                                                   name__appeared_at__lte=localtime())
+    pokemons_entity = PokemonEntity.objects.filter(title_ru__disappeared_at__gte=localtime(),
+                                                   title_ru__appeared_at__lte=localtime())
     pokemons = Pokemon.objects.all()
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
@@ -39,7 +39,7 @@ def show_all_pokemons(request):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
-            request.build_absolute_uri(f'media/{pokemon_entity.name.photo_of_pokemon}')
+            request.build_absolute_uri(f'media/{pokemon_entity.title_ru.photo_of_pokemon}')
         )
 
     pokemons_on_page = []
@@ -47,7 +47,7 @@ def show_all_pokemons(request):
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
             'img_url': request.build_absolute_uri(f'media/{pokemon.photo_of_pokemon}'),
-            'title_ru': pokemon.name,
+            'title_ru': pokemon.title_ru,
         })
 
     return render(request, 'mainpage.html', context={
@@ -57,22 +57,19 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    #   pokemons_entity = PokemonEntity.objects.all()
-
     try:
         pokemon = Pokemon.objects.get(id=pokemon_id, disappeared_at__gte=localtime(), appeared_at__lte=localtime())
     except Pokemon.DoesNotExist:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     pokemon_info = {
-    "pokemon_id": 1,
-        "title_ru": pokemon.name,
-        "title_en": "Bulbasaur",
-        "title_jp": "フシギダネ",
-        "description": "cтартовый покемон двойного травяного и ядовитого типа из первого поколения и региона Канто. В национальном покедексе под номером 1. На 16 уровне эволюционирует в Ивизавра. Ивизавр на 32 уровне эволюционирует в Венузавра. Наряду с Чармандером и Сквиртлом, Бульбазавр является одним из трёх стартовых покемонов региона Канто.",
+        "pokemon_id": pokemon.id,
+        "title_ru": pokemon.title_ru,
+        "title_en": pokemon.title_en,
+        "title_jp": pokemon.title_jp,
+        "description": pokemon.description,
         "img_url": request.build_absolute_uri(f'/media/{pokemon.photo_of_pokemon}'),
     }
-
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemon.pokemon_entities.all():
