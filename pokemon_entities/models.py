@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Pokemon(models.Model):
-    title_ru = models.CharField(max_length=200)
+    title_ru = models.CharField(max_length=200, null=True)
     title_en = models.CharField(max_length=200, null=True)
     title_jp = models.CharField(max_length=200, null=True)
     photo_of_pokemon = models.ImageField(blank=True, null=True)
@@ -14,6 +14,7 @@ class Pokemon(models.Model):
     defence = models.IntegerField(null=True, blank=True)
     stamina = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    evolution = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.title_ru}'
