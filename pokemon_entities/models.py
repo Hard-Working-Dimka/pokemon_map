@@ -20,12 +20,20 @@ class Pokemon(models.Model):
     def __str__(self):
         return f'{self.title_ru}'
 
+    class Meta:
+        verbose_name = 'Покемон'
+        verbose_name_plural = 'Покемоны'
+
 
 class PokemonEntity(models.Model):
     title_ru = models.ForeignKey(Pokemon, on_delete=models.CASCADE, null=False, blank=False,
                                  related_name='pokemon_entities', verbose_name='Имя на русском')
-    lat = models.FloatField(null=True, verbose_name='Широта')
-    lon = models.FloatField(null=True, verbose_name='Долгота')
+    lat = models.FloatField(null=True, verbose_name='Широта', blank=True)
+    lon = models.FloatField(null=True, verbose_name='Долгота', blank=True)
 
     def __str__(self):
         return f'{self.title_ru}'
+
+    class Meta:
+        verbose_name = 'Местоположение'
+        verbose_name_plural = 'Местоположения'
