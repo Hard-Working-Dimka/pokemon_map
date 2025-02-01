@@ -32,7 +32,7 @@ def show_all_pokemons(request):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemons_entity:
-        img_url = get_img_url(pokemon_entity.title_ru.photo_of_pokemon, request)
+        img_url = get_img_url(pokemon_entity.name_of_pokemon_ru.photo_of_pokemon, request)
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
@@ -45,7 +45,7 @@ def show_all_pokemons(request):
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
             'img_url': img_url,
-            'title_ru': pokemon.title_ru,
+            'title_ru': pokemon.name_of_pokemon_ru,
         })
 
     return render(request, 'mainpage.html', context={
@@ -63,23 +63,23 @@ def show_pokemon(request, pokemon_id):
 
     pokemon_info = {
         "pokemon_id": pokemon.id,
-        "title_ru": pokemon.title_ru,
-        "title_en": pokemon.title_en,
-        "title_jp": pokemon.title_jp,
+        "title_ru": pokemon.name_of_pokemon_ru,
+        "title_en": pokemon.name_of_pokemon_en,
+        "title_jp": pokemon.name_of_pokemon_jp,
         "description": pokemon.description,
         "img_url": img_url,
     }
-    if pokemon.evolution:
+    if pokemon.previous_evolution:
         pokemon_info["previous_evolution"] = {
-            "title_ru": pokemon.evolution.title_ru,
-            "pokemon_id": pokemon.evolution.id,
+            "title_ru": pokemon.previous_evolution.name_of_pokemon_ru,
+            "pokemon_id": pokemon.previous_evolution.id,
             "img_url": img_url,
         }
     pokemon_next_evolutions = pokemon.next_evolutions.all()
     for pokemon_evolution in pokemon_next_evolutions:
         img_url = get_img_url(pokemon_evolution.photo_of_pokemon, request)
         pokemon_info["next_evolution"] = {
-            "title_ru": pokemon_evolution.title_ru,
+            "title_ru": pokemon_evolution.name_of_pokemon_ru,
             "pokemon_id": pokemon_evolution.id,
             "img_url": img_url,
         }
@@ -89,7 +89,7 @@ def show_pokemon(request, pokemon_id):
     active_pokemons = pokemon.pokemon_entities.filter(disappeared_at__gte=localtime(),
                                                       appeared_at__lte=localtime())
     for pokemon_entity in active_pokemons:
-        img_url = get_img_url(pokemon_entity.title_ru.photo_of_pokemon, request)
+        img_url = get_img_url(pokemon_entity.name_of_pokemon_ru.photo_of_pokemon, request)
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
