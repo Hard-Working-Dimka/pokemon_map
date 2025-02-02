@@ -1,7 +1,7 @@
 import folium
 
 from django.http import HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from pokemon_entities.models import Pokemon, PokemonEntity
 from django.utils.timezone import localtime
 
@@ -55,10 +55,7 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    try:
-        pokemon = Pokemon.objects.get(id=pokemon_id)
-    except Pokemon.DoesNotExist:
-        return HttpResponseNotFound('<h1>Такой покемон не найден, возможно, он скоро появится!</h1>')
+    pokemon = get_object_or_404(Pokemon, id=pokemon_id)
     img_url = get_img_url(pokemon.photo, request)
 
     pokemon_info = {
